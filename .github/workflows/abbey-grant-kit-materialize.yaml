@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ABBEY_TOKEN: ${{ secrets.ABBEY_TOKEN }}
+      TF_VAR_pg_password: ${{ secrets.PG_PASSWORD }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3

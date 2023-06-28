@@ -12,15 +12,9 @@ terraform {
       source = "abbeylabs/abbey"
       version = "0.1.4"
     }
-
-    null = {
-      source = "hashicorp/null"
-      version = "3.2.1"
-    }
-
-    random = {
-      source = "hashicorp/random"
-      version = "3.4.3"
+    postgresql = {
+      source = "cyrilgdn/postgresql"
+      version = "1.19.0"
     }
   }
 }
@@ -29,18 +23,20 @@ provider "abbey" {
   # Configuration options
 }
 
-provider "null" {
-  # Configuration options
+provider "postgresql" {
+  host            = var.pg_host
+  port            = var.pg_port
+  database        = var.pg_db
+  username        = var.pg_username
+  password        = var.pg_password
+  sslmode         = "require"
+  connect_timeout = var.pg_connect_timeout
 }
 
-provider "random" {
-  # Configuration options
-}
-
-resource "abbey_grant_kit" "null_grant" {
-  name = "Null grant"
+resource "abbey_grant_kit" "postgresql_admin" {
+  name = "PostgreSQL: Admin"
   description = <<-EOT
-    Grants access to a Null Resource.
+    Grants admin role to a user.
     This Grant Kit uses a single-step Grant Workflow that requires only a single reviewer
     from a list of reviewers to approve access.
   EOT
@@ -61,16 +57,18 @@ resource "abbey_grant_kit" "null_grant" {
   output = {
     # Replace with your own path pointing to where you want your access changes to manifest.
     # Path is an RFC 3986 URI, such as `github://{organization}/{repo}/path/to/file.tf`.
-    location = "github://replace-me-with-organization/replace-me-with-repo/access.tf"
+    location = "github://replace-me-with-organization/replace-me-with-repo/access.tf" # CHANGEME
     append = <<-EOT
-      resource "null_resource" "null_grant_${random_pet.random_pet_name.id}" {
+      resource "postgresql_grant_role" "admin__{{ .data.system.abbey.secondary_identities.postgresql.role }}" { # {{ .data.system.abbey.abbey_identity }}
+        role       = "{{ .data.system.abbey.secondary_identities.postgresql.role }}"
+        grant_role = "admin"
       }
     EOT
   }
 }
 
 resource "abbey_identity" "user_1" {
-  name = "User 1"
+  name = "User 1" # CHANGEME
 
   linked = jsonencode({
     abbey = [
@@ -79,10 +77,11 @@ resource "abbey_identity" "user_1" {
         value = "replace-me@example.com"
       }
     ]
-  })
-}
 
-resource "random_pet" "random_pet_name" {
-  length = 5
-  separator = "_"
+    postgresql = [
+      {
+        role = "testuser"
+      }
+    ]
+  })
 }
