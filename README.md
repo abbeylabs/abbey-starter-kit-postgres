@@ -1,4 +1,4 @@
-# Abbey Starter Kit Quickstart Example
+# Abbey Starter Kit Postgres
 
 This example shows how to create a single step Grant Kit workflow.
 The example features requesting access to a [postgresql](https://registry.terraform.io/providers/cyrilgdn/postgresql/latest/docs) admin role from multiple reviewers, requiring only `one_of` the reviewers to approve the access.
