@@ -5,7 +5,7 @@ The example features requesting access to a [postgresql](https://registry.terraf
 
 ## Usage
 
-Visit this [Starter Kit's docs](https://docs.abbey.io/getting-started/quickstart) for a short usage walkthrough.
+Visit this [Starter Kit's docs](https://docs.abbey.io/integrations/data/postgres) for a short usage walkthrough.
 
 - Let's say you have a database named `postgres` and an `admin` role that you'd like to assign to engineers who are on-call.
 - Engineers on call can request access to be assigned the `admin` role via Abbey. This will create a PR appending the following snippet to `access.tf`:
