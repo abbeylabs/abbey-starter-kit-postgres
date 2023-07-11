@@ -1,3 +1,9 @@
+variable "abbey_token" {
+  type = string
+  sensitive = true
+  description = "Abbey API Token"
+}
+
 variable "pg_host" {
   type = string
   default = "postgres_server_ip" # CHANGEME
