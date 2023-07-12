@@ -21,7 +21,7 @@ terraform {
 
 provider "abbey" {
   # Configuration options
-  bearer_token = var.abbey_token
+  bearer_auth = var.abbey_token
 }
 
 provider "postgresql" {
