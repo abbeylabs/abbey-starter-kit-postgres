@@ -10,7 +10,7 @@ terraform {
   required_providers {
     abbey = {
       source = "abbeylabs/abbey"
-      version = "0.2.2"
+      version = "0.2.4"
     }
     postgresql = {
       source = "cyrilgdn/postgresql"
@@ -46,9 +46,6 @@ resource "abbey_grant_kit" "postgresql_admin" {
     steps = [
       {
         reviewers = {
-          # Typically uses your Primary Identity.
-          # For this local example, you can pass in an arbitrary string.
-          # For more information on what a Primary Identity is, visit https://docs.abbey.io.
           one_of = ["replace-me@example.com"]
         }
       }
@@ -60,8 +57,8 @@ resource "abbey_grant_kit" "postgresql_admin" {
     # Path is an RFC 3986 URI, such as `github://{organization}/{repo}/path/to/file.tf`.
     location = "github://replace-me-with-organization/replace-me-with-repo/access.tf" # CHANGEME
     append = <<-EOT
-      resource "postgresql_grant_role" "admin__{{ .data.system.abbey.secondary_identities.postgresql.role }}" { # {{ .data.system.abbey.abbey_identity }}
-        role       = "{{ .data.system.abbey.secondary_identities.postgresql.role }}"
+      resource "postgresql_grant_role" "admin__{{ .data.system.abbey.identities.postgres.role }}" { # {{ .data.system.abbey.identities.abbey.email }}
+        role       = "{{ .data.system.abbey.identities.postgres.role }}"
         grant_role = "admin"
       }
     EOT
@@ -69,20 +66,11 @@ resource "abbey_grant_kit" "postgresql_admin" {
 }
 
 resource "abbey_identity" "user_1" {
-  name = "User 1" # CHANGEME
-
-  linked = jsonencode({
-    abbey = [
-      {
-        type  = "AuthId"
-        value = "replace-me@example.com"
-      }
-    ]
-
-    postgresql = [
-      {
-        role = "testuser"
-      }
-    ]
-  })
+  abbey_account = "replace-me@example.com"
+  source = "postgres"
+  metadata = jsonencode(
+    {
+      role = "testuser"
+    }
+  )
 }
